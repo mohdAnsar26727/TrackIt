@@ -1,0 +1,59 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+.local.properties
+
+# Log files
+*.log
+
+# Android Studio specific files
+.idea/
+*.iml
+
+# Keystore files
+*.jks
+*.keystore
+
+# Android Studio navigation editor
+.navigation/
+
+# External native build files
+.cmake/
+.externalNativeBuild/
+
+# IntelliJ
+*.iws
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Gradle Wrapper
+gradle-wrapper.jar
+
+# Annotation processor
+apt_generated/
+
+# Miscellaneous
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.gem
+*.swp
+*.swo
+*.tmp
+
+# Firebase config file
+google-services.json
+
+# Jetpack Compose
+*.compose/
