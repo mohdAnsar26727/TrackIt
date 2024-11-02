@@ -1,6 +1,9 @@
 package track.it.app.ui.theme
 import androidx.compose.ui.graphics.Color
 
+val green40 = Color(0x6680FF00)
+val yellow40 = Color(0x66FFF200)
+
 val primaryLight = Color(0xFF5E5F5D)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFFBFAF7)

@@ -2,7 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
     kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -62,14 +65,28 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    //implementation(libs.glide.compose)
+
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    kapt(libs.hilt.android.compiler)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.room.paging)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.drawablepainter)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.assisted.inject.annotations.dagger2)
+    implementation(libs.androidx.core.splashscreen)
+    annotationProcessor(libs.assisted.inject.processor.dagger2)
+
+    ksp(libs.androidx.room.compiler)
+    kapt(libs.hilt.android.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
