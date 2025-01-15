@@ -16,12 +16,12 @@ object Dimensions {
 }
 
 val marginMinimal = smallSize
-val marginNormal = mediumSize
+val marginDefault = mediumSize
 val marginLarge = largeSize
 val marginExtraLarge = extraLargeSize
 
 val paddingMinimal = ContentPadding(smallSize)
-val paddingNormal = ContentPadding(mediumSize)
+val paddingDefault = ContentPadding(mediumSize)
 val paddingLarge = ContentPadding(largeSize)
 val paddingExtraLarge = ContentPadding(extraLargeSize)
 

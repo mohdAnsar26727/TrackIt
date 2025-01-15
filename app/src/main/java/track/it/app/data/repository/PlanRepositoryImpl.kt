@@ -22,13 +22,13 @@ class PlanRepositoryImpl @Inject constructor(
     private val planDao: PlanDao,
     private val transactionDao: TransactionDao
 ) : PlanRepository {
-    override fun getPlans(): Flow<PagingData<PlanDetails>> {
+    override fun getPlans(query: String): Flow<PagingData<PlanDetails>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 10, // Define the page size
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { planDao.getAllPlansPaged() }
+            pagingSourceFactory = { planDao.getAllPlansPaged(query) }
         ).flow.map { pagingData ->
             pagingData.map { plan ->
                 val transactions = transactionDao.getTransactionsByPlanId(plan.id)

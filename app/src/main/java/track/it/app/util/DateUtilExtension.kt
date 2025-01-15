@@ -1,4 +1,4 @@
-package track.it.app.ui.util
+package track.it.app.util
 
 import java.text.SimpleDateFormat
 import java.util.Date

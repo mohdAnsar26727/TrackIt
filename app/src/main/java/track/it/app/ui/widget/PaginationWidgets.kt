@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import track.it.app.R
-import track.it.app.ui.theme.marginNormal
+import track.it.app.ui.theme.marginDefault
 import track.it.app.ui.theme.paddingLarge
 
 fun <T : Any> LazyListScope.handlePagingState(
@@ -91,7 +91,7 @@ fun EmptyStateMessage(
 ) {
     Column(
         modifier,
-        verticalArrangement = Arrangement.spacedBy(marginNormal),
+        verticalArrangement = Arrangement.spacedBy(marginDefault),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
@@ -150,7 +150,7 @@ fun ErrorMessage(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )
-            Spacer(modifier = Modifier.size(marginNormal))
+            Spacer(modifier = Modifier.size(marginDefault))
             OutlinedButton(onClick = onClickRetry) {
                 Text(text = stringResource(id = R.string.retry))
             }

@@ -65,10 +65,10 @@ import track.it.app.di.TransactionDetailsViewModelFactoryProvider
 import track.it.app.domain.model.Transaction
 import track.it.app.domain.model.TransactionStatus
 import track.it.app.ui.theme.green40
+import track.it.app.ui.theme.marginDefault
 import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.marginNormal
+import track.it.app.ui.theme.paddingDefault
 import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
 import track.it.app.ui.theme.yellow40
 import track.it.app.ui.widget.ActionMenuText
 
@@ -162,7 +162,7 @@ fun TransactionDetailsScreen(
                     modifier = Modifier.padding(paddingMinimal.horizontal)
                 )
 
-                Spacer(modifier = Modifier.height(marginNormal))
+                Spacer(modifier = Modifier.height(marginDefault))
 
                 BillImagesGrid(
                     images = transactionData!!.billImages.map { it.imageUrl },
@@ -256,7 +256,7 @@ fun BillImagesGrid(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingNormal.all)
+                    .padding(paddingDefault.all)
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, zoom, _ ->
                             scale *= zoom

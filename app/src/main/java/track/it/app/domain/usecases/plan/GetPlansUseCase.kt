@@ -8,5 +8,6 @@ import track.it.app.domain.repository.PlanRepository
 class GetPlansUseCase(
     private val planRepository: PlanRepository
 ) {
-    operator fun invoke(): Flow<PagingData<PlanDetails>> = planRepository.getPlans()
+    operator fun invoke(query: String): Flow<PagingData<PlanDetails>> =
+        planRepository.getPlans(query)
 }

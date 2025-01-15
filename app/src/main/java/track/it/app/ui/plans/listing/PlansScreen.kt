@@ -1,5 +1,6 @@
 package track.it.app.ui.plans.listing
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,26 +15,38 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,10 +62,11 @@ import track.it.app.domain.model.PlanMetrics
 import track.it.app.ui.navigation.ScreenAddEditPlans
 import track.it.app.ui.navigation.ScreenPlanDetails
 import track.it.app.ui.theme.AppTypography
+import track.it.app.ui.theme.marginDefault
 import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.marginNormal
+import track.it.app.ui.theme.paddingDefault
 import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
+import track.it.app.ui.widget.SpacerLarge
 import track.it.app.ui.widget.handlePagingState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,32 +75,20 @@ fun PlansScreen(
     navController: NavController,
     myViewModel: PlanViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val plans = myViewModel.plans.collectAsLazyPagingItems(scope.coroutineContext)
+    val plans = myViewModel.plansFlow.collectAsLazyPagingItems(scope.coroutineContext)
+    val topAppBarScrollBehaviour = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val bottomAppBarScrollBehaviour = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+    val listState = rememberLazyListState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Track.It",
-                        style = AppTypography.headlineSmall
-                    )
-                },
-                navigationIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .padding(paddingNormal.horizontal)
-                            .size(40.dp),
-                        painter = painterResource(id = R.drawable.ic_wallet),
-                        contentDescription = null
-                    )
-                })
-
-        },
+        modifier = Modifier
+            .nestedScroll(bottomAppBarScrollBehaviour.nestedScrollConnection)
+            //.nestedScroll(topAppBarScrollBehaviour.nestedScrollConnection)
+            .fillMaxSize(),
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -99,15 +101,46 @@ fun PlansScreen(
                     contentDescription = null
                 )
             }
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        bottomBar = {
+            BottomAppBar(
+                scrollBehavior = bottomAppBarScrollBehaviour
+            ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(paddingDefault.horizontal)
+                            .size(40.dp),
+                        painter = painterResource(id = R.drawable.ic_wallet),
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "Track.It",
+                        style = AppTypography.headlineSmall
+                    )
+                }
+            }
         }
     ) { paddingValues ->
+
+        PlanSearchBar { query ->
+            myViewModel.getPlans(query)
+        }
+
         LazyColumn(
-            contentPadding = paddingNormal.all,
+            contentPadding = paddingDefault.all,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(marginNormal)
+            verticalArrangement = Arrangement.spacedBy(marginDefault),
+            state = listState
         ) {
+
+            item {
+                SpacerLarge()
+            }
+
             items(
                 count = plans.itemCount
             ) { index ->
@@ -134,6 +167,80 @@ fun PlansScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlanSearchBar(
+    onQueryChange: (query: String) -> Unit
+) {
+    var query by remember { mutableStateOf("") }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val animatedPadding by animateDpAsState(if (isExpanded) 0.dp else 16.dp)
+
+    SearchBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = animatedPadding),
+        inputField = {
+            SearchBarDefaults.InputField(
+                query = query,
+                onSearch = { isExpanded = false },
+                onQueryChange = {
+                    query = it
+                    onQueryChange(query)
+                },
+                expanded = isExpanded,
+                onExpandedChange = { isExpanded = it },
+                placeholder = { Text("Type to search") },
+                leadingIcon = {
+                    val icon =
+                        if (isExpanded) {
+                            R.drawable.rounded_arrow_back_24
+                        } else {
+                            R.drawable.rounded_manage_search_24
+                        }
+                    IconButton(
+                        onClick = {
+                            query = ""
+                            onQueryChange("")
+                            isExpanded = !isExpanded
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(icon),
+                            contentDescription = null
+                        )
+                    }
+                },
+                trailingIcon = {
+                    if (isExpanded) {
+                        IconButton(
+                            onClick = {
+                                query = ""
+                            }
+                        ) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = null
+                            )
+                        }
+
+                    }
+                },
+            )
+        },
+        expanded = isExpanded,
+        onExpandedChange = {
+            isExpanded = it
+        },
+        shadowElevation = 16.dp
+    ) {
+        Box {
+
+        }
+    }
+}
+
 @Composable
 fun PlanCard(
     planDetails: PlanDetails,
@@ -147,14 +254,14 @@ fun PlanCard(
             .clip(CardDefaults.shape)
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .clickable(onClick = onClick)
-            .padding(paddingNormal.all)
+            .padding(paddingDefault.all)
             .wrapContentHeight()
     ) {
         Text(
             text = plan.title,
             style = MaterialTheme.typography.headlineMedium
         )
-        Spacer(modifier = Modifier.size(marginNormal))
+        Spacer(modifier = Modifier.size(marginDefault))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 contentAlignment = Alignment.Center,
@@ -173,7 +280,7 @@ fun PlanCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Spacer(modifier = Modifier.size(marginNormal))
+            Spacer(modifier = Modifier.size(marginDefault))
             BudgetText(
                 plan.initialBudget,
                 metrics.remainingAmount
@@ -189,7 +296,7 @@ fun TransactionSummary(metrics: PlanMetrics) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingNormal.top)
+            .padding(paddingDefault.top)
             .background(
                 MaterialTheme.colorScheme.surfaceContainerLow,
                 CardDefaults.shape
@@ -220,7 +327,7 @@ fun TransactionSummary(metrics: PlanMetrics) {
             progress = metrics.predictedTransactions.toFloat() / metrics.totalTransactions,
             label = "Predicted"
         )
-        Spacer(modifier = Modifier.size(marginNormal))
+        Spacer(modifier = Modifier.size(marginDefault))
         CircularProgressWithLabel(
             progress = metrics.paidTransactions.toFloat() / metrics.totalTransactions,
             label = "Paid"

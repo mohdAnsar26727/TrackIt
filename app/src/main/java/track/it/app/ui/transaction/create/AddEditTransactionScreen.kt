@@ -82,14 +82,14 @@ import track.it.app.R
 import track.it.app.domain.model.TransactionStatus
 import track.it.app.ui.navigation.ScreenAddEditTransactions
 import track.it.app.ui.theme.AppTypography
+import track.it.app.ui.theme.marginDefault
 import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.marginNormal
+import track.it.app.ui.theme.paddingDefault
 import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
 import track.it.app.ui.transaction.viewmodel.TransactionCUDViewmodel
-import track.it.app.ui.util.DateFormat
-import track.it.app.ui.util.formattedDate
-import track.it.app.ui.util.toTitleCase
+import track.it.app.util.DateFormat
+import track.it.app.util.formattedDate
+import track.it.app.util.toTitleCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -208,10 +208,10 @@ fun AddEditTransactionScreen(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(paddingNormal.horizontal)
-                    .padding(paddingNormal.bottom),
-                horizontalArrangement = Arrangement.spacedBy(marginNormal),
-                verticalArrangement = Arrangement.spacedBy(marginNormal)
+                    .padding(paddingDefault.horizontal)
+                    .padding(paddingDefault.bottom),
+                horizontalArrangement = Arrangement.spacedBy(marginDefault),
+                verticalArrangement = Arrangement.spacedBy(marginDefault)
             ) {
 
                 item(span = {
@@ -288,7 +288,7 @@ fun AddEditTransactionScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .padding(paddingNormal.vertical),
+                                        .padding(paddingDefault.vertical),
                                     contentAlignment = Alignment.TopEnd
                                 ) {
                                     Icon(
@@ -299,7 +299,7 @@ fun AddEditTransactionScreen(
 
                             }
                         )
-                        Spacer(modifier = Modifier.size(marginNormal))
+                        Spacer(modifier = Modifier.size(marginDefault))
 
                         Row(
                             modifier = Modifier.selectableGroup(),
@@ -316,7 +316,7 @@ fun AddEditTransactionScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.size(marginNormal))
+                        Spacer(modifier = Modifier.size(marginDefault))
                     }
                 }
 
@@ -395,7 +395,7 @@ fun AddEditTransactionScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(paddingNormal.all)
+                    .padding(paddingDefault.all)
             ) {
                 Text(stringResource(R.string.save))
             }

@@ -35,7 +35,7 @@ import track.it.app.R
 import track.it.app.domain.model.Plan
 import track.it.app.ui.theme.AppTypography
 import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.paddingNormal
+import track.it.app.ui.theme.paddingDefault
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,8 +89,8 @@ fun AddEditPlanScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(paddingNormal.horizontal)
-                    .padding(paddingNormal.bottom)
+                    .padding(paddingDefault.horizontal)
+                    .padding(paddingDefault.bottom)
                     .verticalScroll(rememberScrollState())
             ) {
 
@@ -137,7 +137,7 @@ fun AddEditPlanScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .padding(paddingNormal.vertical),
+                                .padding(paddingDefault.vertical),
                             contentAlignment = Alignment.TopEnd
                         ) {
                             Icon(
@@ -166,7 +166,7 @@ fun AddEditPlanScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(paddingNormal.all)
+                    .padding(paddingDefault.all)
             ) {
                 Text("Save")
             }

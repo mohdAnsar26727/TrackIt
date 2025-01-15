@@ -1,4 +1,4 @@
-package track.it.app.ui.util
+package track.it.app.util
 
 fun String.toTitleCase(): String {
     return this.lowercase().split(" ").joinToString(" ") { word ->

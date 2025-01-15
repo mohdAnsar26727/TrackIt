@@ -49,9 +49,9 @@ import track.it.app.ui.navigation.ScreenTransactionDetails
 import track.it.app.ui.plans.listing.BudgetText
 import track.it.app.ui.plans.listing.TransactionSummary
 import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginNormal
+import track.it.app.ui.theme.marginDefault
+import track.it.app.ui.theme.paddingDefault
 import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
 import track.it.app.ui.transaction.details.TransactionCard
 import track.it.app.ui.transaction.dialog.TransactionColumn
 import track.it.app.ui.transaction.viewmodel.TransactionCUDViewmodel
@@ -172,15 +172,15 @@ fun PlanDetailsScreen(
         val plan = planDetails?.plan ?: return@Scaffold
         val metrics = planDetails?.progress ?: return@Scaffold
         LazyColumn(
-            contentPadding = paddingNormal.horizontal,
+            contentPadding = paddingDefault.horizontal,
             modifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(paddingValues)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(marginNormal)
+            verticalArrangement = Arrangement.spacedBy(marginDefault)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(marginNormal)) {
+                Column(verticalArrangement = Arrangement.spacedBy(marginDefault)) {
                     // Plan Overview
                     BudgetText(
                         plan.initialBudget,
