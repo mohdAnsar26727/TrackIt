@@ -32,6 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -83,6 +84,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.assisted.inject.annotations.dagger2)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.accompanist.navigation.animation)
     annotationProcessor(libs.assisted.inject.processor.dagger2)
 
     ksp(libs.androidx.room.compiler)

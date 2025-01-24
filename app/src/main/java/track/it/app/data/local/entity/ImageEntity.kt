@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class ImageEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val transactionId: Long, // Foreign key to TransactionEntity
+    val planId: Long, // Foreign key to TransactionEntity
     val imageUrl: String // URL or URI of the image
 )

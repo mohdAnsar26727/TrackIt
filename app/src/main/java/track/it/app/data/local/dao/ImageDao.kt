@@ -28,4 +28,10 @@ interface ImageDao {
     // Get all images for a specific transaction
     @Query("SELECT * FROM images WHERE transactionId = :transactionId")
     suspend fun getImagesForTransaction(transactionId: Long): List<ImageEntity>
+
+    @Query("DELETE FROM images WHERE planId=:planId")
+    suspend fun deleteImagesByPlanId(planId: Long)
+
+    @Query("SELECT * FROM images WHERE planId=:planId")
+    suspend fun getTransactionProofOfPlan(planId: Long): List<ImageEntity>
 }

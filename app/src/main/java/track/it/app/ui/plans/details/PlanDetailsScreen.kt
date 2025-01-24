@@ -12,6 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -32,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,13 +51,12 @@ import track.it.app.ui.navigation.ScreenTransactionDetails
 import track.it.app.ui.plans.listing.BudgetText
 import track.it.app.ui.plans.listing.TransactionSummary
 import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginDefault
-import track.it.app.ui.theme.paddingDefault
-import track.it.app.ui.theme.paddingMinimal
+import track.it.app.ui.theme.marginMedium
+import track.it.app.ui.theme.paddingMedium
+import track.it.app.ui.theme.paddingSmall
 import track.it.app.ui.transaction.details.TransactionCard
 import track.it.app.ui.transaction.dialog.TransactionColumn
 import track.it.app.ui.transaction.viewmodel.TransactionCUDViewmodel
-import track.it.app.ui.widget.ActionMenuText
 import track.it.app.ui.widget.handlePagingState
 
 @OptIn(
@@ -97,12 +98,14 @@ fun PlanDetailsScreen(
         mutableStateOf<Transaction?>(null)
     }
 
+    var showMoreOptionMenu by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             MediumTopAppBar(
                 title = {
                     Text(
-                        text = args.title,
+                        text = planDetails?.plan?.title ?: args.title,
                         style = appBarTitleStyle
                     )
                 },
@@ -119,12 +122,42 @@ fun PlanDetailsScreen(
                     }
                 },
                 actions = {
-                    ActionMenuText(text = stringResource(R.string.edit)) {
-                        navController.navigate(ScreenAddEditPlans(id = args.id))
+                    IconButton(
+                        onClick = {
+                            showMoreOptionMenu = true
+                        }
+                    ) {
+                        Icon(Icons.Default.MoreVert, contentDescription = null)
                     }
-                    ActionMenuText(text = stringResource(R.string.delete)) {
+                    DropdownMenu(
+                        expanded = showMoreOptionMenu,
+                        onDismissRequest = { showMoreOptionMenu = false },
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                showMoreOptionMenu = false
+                                navController.navigate(ScreenAddEditPlans(id = args.id))
+                            },
+                            text = {
+                                Text("Edit")
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                showMoreOptionMenu = false
+                                viewModel.deletePlan(args.id)
+                            },
+                            text = {
+                                Text("Delete")
+                            })
 
                     }
+                    /* ActionMenuText(text = stringResource(R.string.edit)) {
+
+                     }
+                     ActionMenuText(text = stringResource(R.string.delete)) {
+
+                     }*/
                 },
                 scrollBehavior = scrollBehavior
             )
@@ -172,15 +205,15 @@ fun PlanDetailsScreen(
         val plan = planDetails?.plan ?: return@Scaffold
         val metrics = planDetails?.progress ?: return@Scaffold
         LazyColumn(
-            contentPadding = paddingDefault.horizontal,
+            contentPadding = paddingMedium.horizontal,
             modifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .padding(paddingValues)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(marginDefault)
+            verticalArrangement = Arrangement.spacedBy(marginMedium)
         ) {
             item {
-                Column(verticalArrangement = Arrangement.spacedBy(marginDefault)) {
+                Column(verticalArrangement = Arrangement.spacedBy(marginMedium)) {
                     // Plan Overview
                     BudgetText(
                         plan.initialBudget,
@@ -201,7 +234,7 @@ fun PlanDetailsScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.surface)
                         .fillMaxWidth()
-                        .padding(paddingMinimal.vertical)
+                        .padding(paddingSmall.vertical)
                 )
             }
 

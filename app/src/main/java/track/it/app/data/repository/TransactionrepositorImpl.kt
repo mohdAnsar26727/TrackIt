@@ -16,6 +16,7 @@ import track.it.app.data.mappers.TransactionWithImagesMapper
 import track.it.app.domain.model.Transaction
 import track.it.app.domain.model.TransactionStatus
 import track.it.app.domain.model.TransactionWithImages
+import track.it.app.domain.repository.FileRepository
 import track.it.app.domain.repository.TransactionRepository
 import track.it.app.util.CoroutineExtended.doIoOperation
 import javax.inject.Inject
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class TransactionRepositoryImpl @Inject constructor(
     private val transactionDao: TransactionDao,
     private val imageDao: ImageDao,
-    private val mapper: TransactionWithImagesMapper
+    private val mapper: TransactionWithImagesMapper,
+    private val fileHandler: FileRepository
 ) : TransactionRepository {
     override fun getTransactions(planId: Long): Flow<PagingData<TransactionWithImages>> {
         return Pager(
@@ -67,7 +69,7 @@ class TransactionRepositoryImpl @Inject constructor(
         to: String,
         note: String,
         amount: Double,
-        status: TransactionStatus
+        transactionStatus: TransactionStatus
     ): Long {
         return doIoOperation {
             val time = System.currentTimeMillis()
@@ -77,7 +79,7 @@ class TransactionRepositoryImpl @Inject constructor(
                     to = to,
                     note = note,
                     amount = amount,
-                    status = status.name,
+                    status = transactionStatus.name,
                     createdAt = time,
                     updatedAt = time
                 )
@@ -95,12 +97,14 @@ class TransactionRepositoryImpl @Inject constructor(
 
     override suspend fun addTransactionProof(
         copiedImages: List<String>,
-        transactionId: Long
+        transactionId: Long,
+        planId: Long
     ) {
         doIoOperation {
             val imageEntities = copiedImages.map { imageUrl ->
                 ImageEntity(
                     imageUrl = imageUrl,
+                    planId = planId,
                     transactionId = transactionId
                 )
             }
@@ -112,6 +116,16 @@ class TransactionRepositoryImpl @Inject constructor(
         doIoOperation {
             val proofs = imageDao.getImagesForTransaction(transactionId = transactionId)
             imageDao.deleteImage(proofs)
+        }
+    }
+
+    override suspend fun deleteTransactionsByPlanId(planId: Long) {
+        doIoOperation {
+            val images = imageDao.getTransactionProofOfPlan(planId)
+            imageDao.deleteImagesByPlanId(planId)
+            transactionDao.deleteTransactionsByPlanId(planId)
+
+            fileHandler.deleteImages(images.map { it.imageUrl })
         }
     }
 }

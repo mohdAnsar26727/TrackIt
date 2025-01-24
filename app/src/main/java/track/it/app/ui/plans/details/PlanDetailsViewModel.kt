@@ -13,12 +13,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import track.it.app.domain.model.PlanDetails
+import track.it.app.domain.usecases.plan.DeletePlanUseCase
 import track.it.app.domain.usecases.plan.GetPlanUseCase
 import track.it.app.domain.usecases.transaction.GetTransactionsUseCase
 
 class PlanDetailsViewModel @AssistedInject constructor(
     private val getPlanUseCase: GetPlanUseCase,
-    private val getTransactionsUseCase: GetTransactionsUseCase,
+    private val deletePlanUseCase: DeletePlanUseCase,
+    getTransactionsUseCase: GetTransactionsUseCase,
     @Assisted private val planId: Long
 ) : ViewModel() {
     @AssistedFactory
@@ -42,6 +44,12 @@ class PlanDetailsViewModel @AssistedInject constructor(
     private fun getPlanById(id: Long) {
         viewModelScope.launch {
             _planById.value = getPlanUseCase(id)
+        }
+    }
+
+    fun deletePlan(id: Long) {
+        viewModelScope.launch {
+            deletePlanUseCase(id)
         }
     }
 }

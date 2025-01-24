@@ -26,6 +26,7 @@ activityKtx = "1.9.3"
 roomKtx = "2.6.1"
 assistedInjectAnnotationsDagger2 = "0.8.1"
 coreSplashscreen = "1.0.1"
+accompanistNavigationAnimation = "0.36.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 assisted-inject-annotations-dagger2 = { group = "com.squareup.inject", name = "assisted-inject-annotations-dagger2", version.ref = "assistedInjectAnnotationsDagger2" }
 assisted-inject-processor-dagger2 = { group = "com.squareup.inject", name = "assisted-inject-processor-dagger2", version.ref = "assistedInjectAnnotationsDagger2" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -34,17 +34,20 @@ class CreateTransactionUseCase(
             to
         )
 
-        copyImagesResult.onFailure { repo.deleteTransaction(transactionId) }
-
-        copyImagesResult.onSuccess { copiedImages ->
-            val transactionImageResult = addTransactionImagesUseCase(
-                copiedImages,
-                transactionId
-            )
-
-            transactionImageResult.onFailure {
-                deleteBillImageFilesUseCase(copiedImages)
+        copyImagesResult
+            .onFailure {
+                repo.deleteTransaction(transactionId)
             }
-        }
+            .onSuccess { copiedImages ->
+                val transactionImageResult = addTransactionImagesUseCase(
+                    billImages = copiedImages,
+                    transactionId = transactionId,
+                    planId = planId
+                )
+
+                transactionImageResult.onFailure {
+                    deleteBillImageFilesUseCase(copiedImages)
+                }
+            }
     }
 }

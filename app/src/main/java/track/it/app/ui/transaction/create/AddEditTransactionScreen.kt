@@ -1,9 +1,11 @@
 package track.it.app.ui.transaction.create
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.Interaction
@@ -29,13 +31,13 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,10 +67,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -82,11 +84,12 @@ import track.it.app.R
 import track.it.app.domain.model.TransactionStatus
 import track.it.app.ui.navigation.ScreenAddEditTransactions
 import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginDefault
-import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.paddingDefault
-import track.it.app.ui.theme.paddingMinimal
+import track.it.app.ui.theme.marginMedium
+import track.it.app.ui.theme.marginSmall
+import track.it.app.ui.theme.paddingMedium
+import track.it.app.ui.theme.paddingSmall
 import track.it.app.ui.transaction.viewmodel.TransactionCUDViewmodel
+import track.it.app.ui.widget.CancellableSaveActionButton
 import track.it.app.util.DateFormat
 import track.it.app.util.formattedDate
 import track.it.app.util.toTitleCase
@@ -208,10 +211,10 @@ fun AddEditTransactionScreen(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(paddingDefault.horizontal)
-                    .padding(paddingDefault.bottom),
-                horizontalArrangement = Arrangement.spacedBy(marginDefault),
-                verticalArrangement = Arrangement.spacedBy(marginDefault)
+                    .padding(paddingMedium.horizontal)
+                    .padding(paddingMedium.bottom),
+                horizontalArrangement = Arrangement.spacedBy(marginMedium),
+                verticalArrangement = Arrangement.spacedBy(marginMedium)
             ) {
 
                 item(span = {
@@ -235,7 +238,7 @@ fun AddEditTransactionScreen(
                                 )
                             }
                         )
-                        Spacer(modifier = Modifier.size(marginMinimal))
+                        Spacer(modifier = Modifier.size(marginSmall))
                         // Amount field
                         OutlinedTextField(
                             value = viewModel.amount,
@@ -250,7 +253,7 @@ fun AddEditTransactionScreen(
                                 )
                             }
                         )
-                        Spacer(modifier = Modifier.size(marginMinimal))
+                        Spacer(modifier = Modifier.size(marginSmall))
                         // Date field
                         OutlinedTextField(
                             value = selectedDate,
@@ -274,7 +277,7 @@ fun AddEditTransactionScreen(
                             readOnly = true,
                             interactionSource = interactionSource
                         )
-                        Spacer(modifier = Modifier.size(marginMinimal))
+                        Spacer(modifier = Modifier.size(marginSmall))
                         // Note field
                         OutlinedTextField(
                             value = viewModel.note,
@@ -288,7 +291,7 @@ fun AddEditTransactionScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxHeight()
-                                        .padding(paddingDefault.vertical),
+                                        .padding(paddingMedium.vertical),
                                     contentAlignment = Alignment.TopEnd
                                 ) {
                                     Icon(
@@ -299,7 +302,7 @@ fun AddEditTransactionScreen(
 
                             }
                         )
-                        Spacer(modifier = Modifier.size(marginDefault))
+                        Spacer(modifier = Modifier.size(marginMedium))
 
                         Row(
                             modifier = Modifier.selectableGroup(),
@@ -316,7 +319,7 @@ fun AddEditTransactionScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.size(marginDefault))
+                        Spacer(modifier = Modifier.size(marginMedium))
                     }
                 }
 
@@ -353,53 +356,27 @@ fun AddEditTransactionScreen(
 
                 }
 
-                items(selectedImages.toList()) { imageUri ->
-                    Box(
+                items(selectedImages, key = { it }) { imageUri ->
+                    ImageItem(
                         modifier = Modifier
+                            .animateItem()
                             .weight(1f)
-                            .wrapContentSize()
+                            .wrapContentSize(), imageUri = imageUri
                     ) {
-                        AsyncImage(
-                            model = imageUri,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .aspectRatio(1f)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Box(modifier = Modifier.padding(paddingMinimal.all)) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .background(
-                                        MaterialTheme.colorScheme.surface,
-                                        CircleShape
-                                    )
-                                    .clickable {
-                                        viewModel.removeSelectedBillImage(imageUri)
-                                    }
-                            )
-                        }
+                        viewModel.removeSelectedBillImage(imageUri)
                     }
                 }
             }
 
             // Fixed Save Button at the bottom
-            Button(
-                onClick = {
+            CancellableSaveActionButton(
+                onPrimaryAction = {
                     viewModel.addTransaction(planId = args.planId)
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(paddingDefault.all)
-            ) {
-                Text(stringResource(R.string.save))
-            }
-
+                onSecondaryAction = {
+                    navController.navigateUp()
+                }
+            )
         }
 
         if (showDatePicker) {
@@ -431,4 +408,47 @@ fun AddEditTransactionScreen(
         }
     }
 
+}
+
+@Composable
+fun ImageItem(
+    modifier: Modifier = Modifier,
+    imageUri: Uri,
+    onRemove: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = CardDefaults.shape
+            )
+            .clip(CardDefaults.shape)
+    ) {
+        AsyncImage(
+            model = imageUri,
+            contentDescription = null,
+            modifier = Modifier
+                .aspectRatio(1f),
+            contentScale = ContentScale.Crop
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onRemove)
+                .align(Alignment.BottomCenter)
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding(paddingSmall.all),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(20.dp)
+            )
+        }
+    }
 }

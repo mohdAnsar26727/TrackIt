@@ -7,6 +7,7 @@ class BillImageMapper : ObjectMapper<BillImage, ImageEntity> {
     override fun toDomain(entity: ImageEntity): BillImage {
         return BillImage(
             id = entity.id,
+            planId = entity.planId,
             transactionId = entity.transactionId,
             imageUrl = entity.imageUrl
         )
@@ -16,6 +17,7 @@ class BillImageMapper : ObjectMapper<BillImage, ImageEntity> {
         return ImageEntity(
             id = domain.id,
             transactionId = domain.transactionId,
+            planId = domain.planId,
             imageUrl = domain.imageUrl
         )
     }

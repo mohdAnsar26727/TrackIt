@@ -24,6 +24,9 @@ interface PlanDao {
     @Delete
     suspend fun deletePlan(plan: PlanEntity): Int
 
+    @Query("DELETE FROM plans WHERE id = :planId")
+    suspend fun deletePlan(planId: Long): Int
+
     // Fetch all plans with pagination support
     @Query(
         """

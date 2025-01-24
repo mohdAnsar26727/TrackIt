@@ -26,13 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import track.it.app.R
-import track.it.app.ui.theme.marginDefault
+import track.it.app.ui.theme.marginMedium
 import track.it.app.ui.theme.paddingLarge
 
 fun <T : Any> LazyListScope.handlePagingState(
     paging: LazyPagingItems<T>,
     @StringRes emptyMessage: Int
 ) {
+
     with(paging) {
         when {
             loadState.refresh is LoadState.Loading -> {
@@ -44,6 +45,7 @@ fun <T : Any> LazyListScope.handlePagingState(
                 // Show error message for initial load error
                 val error = loadState.refresh as LoadState.Error
                 item {
+                    SpacerLarge()
                     ErrorMessage(
                         modifier = Modifier.fillParentMaxSize(),
                         message = error.error.message.orEmpty(),
@@ -57,6 +59,7 @@ fun <T : Any> LazyListScope.handlePagingState(
             itemCount == 0 && loadState.refresh is LoadState.NotLoading -> {
                 // Show empty state message
                 item {
+                    SpacerLarge()
                     EmptyStateMessage(
                         modifier = Modifier.fillMaxSize(),
                         message = stringResource(emptyMessage)
@@ -73,6 +76,7 @@ fun <T : Any> LazyListScope.handlePagingState(
                 // Show error message at the bottom for paginated load failure
                 val error = loadState.append as LoadState.Error
                 item {
+                    SpacerLarge()
                     ErrorMessage(
                         modifier = Modifier,
                         message = error.error.localizedMessage.orEmpty(),
@@ -91,7 +95,7 @@ fun EmptyStateMessage(
 ) {
     Column(
         modifier,
-        verticalArrangement = Arrangement.spacedBy(marginDefault),
+        verticalArrangement = Arrangement.spacedBy(marginMedium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
@@ -142,15 +146,18 @@ fun ErrorMessage(
 ) {
     if (showRetryButton) {
         Column(
-            modifier = modifier.padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = message,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.size(marginDefault))
+            Spacer(modifier = Modifier.size(marginMedium))
             OutlinedButton(onClick = onClickRetry) {
                 Text(text = stringResource(id = R.string.retry))
             }
@@ -160,7 +167,7 @@ fun ErrorMessage(
             text = message,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(paddingLarge.all),
             textAlign = TextAlign.Center
         )

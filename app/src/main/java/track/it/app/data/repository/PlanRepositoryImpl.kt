@@ -81,10 +81,10 @@ class PlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deletePlan(id: Long) {
-        doIoOperation {
-            val plan = planDao.getPlanById(id) ?: return@doIoOperation
-            planDao.deletePlan(plan)
+    override suspend fun deletePlan(id: Long): Boolean {
+        return doIoOperation {
+            val result = planDao.deletePlan(id)
+            return@doIoOperation result > 0
         }
     }
 }

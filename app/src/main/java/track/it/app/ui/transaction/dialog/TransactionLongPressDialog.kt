@@ -32,8 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import track.it.app.domain.model.Transaction
-import track.it.app.ui.theme.marginDefault
-import track.it.app.ui.theme.paddingDefault
+import track.it.app.ui.theme.marginMedium
+import track.it.app.ui.theme.paddingMedium
 import track.it.app.ui.transaction.details.TransactionCard
 
 @Composable
@@ -52,8 +52,8 @@ fun TransactionColumn(
             )
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(paddingDefault.all),
-        verticalArrangement = Arrangement.spacedBy(marginDefault)
+            .padding(paddingMedium.all),
+        verticalArrangement = Arrangement.spacedBy(marginMedium)
     ) {
         TransactionCard(
             transaction = longPressedTransaction,
@@ -66,7 +66,7 @@ fun TransactionColumn(
                 .wrapContentWidth()
                 .animateContentSize()
                 .align(Alignment.End),
-            horizontalArrangement = Arrangement.spacedBy(marginDefault)
+            horizontalArrangement = Arrangement.spacedBy(marginMedium)
         ) {
             if (!showConfirmation) {
                 listOf(

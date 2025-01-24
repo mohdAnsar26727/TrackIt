@@ -10,5 +10,5 @@ interface PlanRepository {
     suspend fun getPlan(id: Long): PlanDetails
     suspend fun updatePlan(plan: Plan)
     suspend fun addPlan(plan: Plan): Long
-    suspend fun deletePlan(id: Long)
+    suspend fun deletePlan(id: Long): Boolean
 }

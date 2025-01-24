@@ -14,7 +14,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -32,10 +32,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import track.it.app.R
-import track.it.app.domain.model.Plan
 import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.paddingDefault
+import track.it.app.ui.theme.marginSmall
+import track.it.app.ui.theme.paddingMedium
+import track.it.app.ui.widget.CancellableSaveActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,10 +46,13 @@ fun AddEditPlanScreen(
 ) {
     if (id != null) {
         viewModel.setPlanIdForEdit(id)
-        viewModel.editPlan.collectAsStateWithLifecycle()
     }
-    LaunchedEffect(viewModel.planResult) {
-        if (viewModel.planResult?.isSuccess == true) {
+
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
+    val planResult by viewModel.planResult.collectAsStateWithLifecycle(null)
+
+    LaunchedEffect(planResult) {
+        if (planResult?.isSuccess == true) {
             navController.navigateUp()
         }
     }
@@ -89,14 +92,14 @@ fun AddEditPlanScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(paddingDefault.horizontal)
-                    .padding(paddingDefault.bottom)
+                    .padding(paddingMedium.horizontal)
+                    .padding(paddingMedium.bottom)
                     .verticalScroll(rememberScrollState())
             ) {
 
                 // Title field
                 OutlinedTextField(
-                    value = viewModel.title,
+                    value = formState.title,
                     onValueChange = viewModel::onTitleValueChange,
                     label = { Text("Plan Name") },
                     modifier = Modifier.fillMaxWidth(),
@@ -107,10 +110,10 @@ fun AddEditPlanScreen(
                         )
                     }
                 )
-                Spacer(modifier = Modifier.size(marginMinimal))
+                Spacer(modifier = Modifier.size(marginSmall))
                 // Budget field
                 OutlinedTextField(
-                    value = viewModel.budget,
+                    value = formState.budget,
                     onValueChange = viewModel::onBudgetValueChange,
                     label = { Text("Budget") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
@@ -122,11 +125,11 @@ fun AddEditPlanScreen(
                         )
                     }
                 )
-                Spacer(modifier = Modifier.size(marginMinimal))
+                Spacer(modifier = Modifier.size(marginSmall))
 
                 //Description Field
                 OutlinedTextField(
-                    value = viewModel.descriptions,
+                    value = formState.description,
                     onValueChange = viewModel::onDescriptionValueChange,
                     label = { Text("Note") },
                     modifier = Modifier
@@ -137,7 +140,7 @@ fun AddEditPlanScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .padding(paddingDefault.vertical),
+                                .padding(paddingMedium.vertical),
                             contentAlignment = Alignment.TopEnd
                         ) {
                             Icon(
@@ -154,23 +157,18 @@ fun AddEditPlanScreen(
             }
 
             // Fixed Save Button at the bottom
-            Button(
-                onClick = {
-                    viewModel.addPlans(
-                        Plan(
-                            title = viewModel.title,
-                            description = viewModel.descriptions,
-                            initialBudget = viewModel.budget.toDouble()
-                        )
-                    )
+            CancellableSaveActionButton(
+                onPrimaryAction = {
+                    if (id == null) {
+                        viewModel.addPlan()
+                    } else {
+                        viewModel.updatePlan(id)
+                    }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(paddingDefault.all)
-            ) {
-                Text("Save")
-            }
-
+                onSecondaryAction = {
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
