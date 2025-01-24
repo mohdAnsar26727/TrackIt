@@ -8,12 +8,14 @@ class AddTransactionImagesUseCase(
 ) {
     suspend operator fun invoke(
         billImages: List<String>,
-        transactionId: Long
+        transactionId: Long,
+        planId: Long
     ): Result<Unit> {
         return runCatching {
             repo.addTransactionProof(
                 billImages,
-                transactionId
+                transactionId,
+                planId = planId
             )
         }
     }

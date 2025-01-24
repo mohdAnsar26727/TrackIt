@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
     alias(libs.plugins.ksp)
 }
@@ -32,6 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -83,6 +84,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.assisted.inject.annotations.dagger2)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.accompanist.navigation.animation)
     annotationProcessor(libs.assisted.inject.processor.dagger2)
 
     ksp(libs.androidx.room.compiler)

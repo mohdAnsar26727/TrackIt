@@ -73,7 +73,7 @@ fun mapPlanEntityWithTransactions(
 
     val predictedTransactions = transactions.count {
         it.status.equals(
-            TransactionStatus.PREDICTED.name,
+            TransactionStatus.ESTIMATED.name,
             ignoreCase = true
         )
     }
@@ -104,7 +104,7 @@ fun mapPlanEntityWithTransactions(
         remainingAmount = remainingAmount,
         progress = progress,
         totalTransactions = totalTransactions,
-        predictedTransactions = predictedTransactions,
+        estimatedTransactions = predictedTransactions,
         paidTransactions = paidTransactions
     )
 

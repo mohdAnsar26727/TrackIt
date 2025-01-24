@@ -1,5 +1,7 @@
 package track.it.app.ui.plans.listing
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,33 +16,47 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import track.it.app.R
@@ -48,11 +64,12 @@ import track.it.app.domain.model.PlanDetails
 import track.it.app.domain.model.PlanMetrics
 import track.it.app.ui.navigation.ScreenAddEditPlans
 import track.it.app.ui.navigation.ScreenPlanDetails
-import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.marginNormal
-import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
+import track.it.app.ui.theme.marginMedium
+import track.it.app.ui.theme.marginSmall
+import track.it.app.ui.theme.paddingMedium
+import track.it.app.ui.theme.paddingSmall
+import track.it.app.ui.widget.SpacerDefault
+import track.it.app.ui.widget.SpacerExtraSmall
 import track.it.app.ui.widget.handlePagingState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,32 +78,69 @@ fun PlansScreen(
     navController: NavController,
     myViewModel: PlanViewModel = hiltViewModel()
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val plans = myViewModel.plans.collectAsLazyPagingItems(scope.coroutineContext)
+    val plans = myViewModel.plansFlow.collectAsLazyPagingItems(scope.coroutineContext)
+    val query by myViewModel.queryFlow.collectAsStateWithLifecycle()
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize(),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Track.It",
-                        style = AppTypography.headlineSmall
-                    )
-                },
-                navigationIcon = {
-                    Icon(
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(paddingMedium.horizontal)
+                                    .size(32.dp),
+                                painter = painterResource(id = R.drawable.ic_wallet),
+                                contentDescription = null
+                            )
+                            Text(
+                                text = stringResource(R.string.app_name),
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                        }
+                    }
+                )
+                if (plans.itemCount > 0) {
+                    TextField(
+                        value = query,
+                        onValueChange = { query ->
+                            myViewModel.updateQuery(query)
+                        },
+                        shape = CardDefaults.shape,
                         modifier = Modifier
-                            .padding(paddingNormal.horizontal)
-                            .size(40.dp),
-                        painter = painterResource(id = R.drawable.ic_wallet),
-                        contentDescription = null
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        leadingIcon = {
+                            IconButton(onClick = {
+
+                            }) {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                            }
+                        },
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        ),
+                        placeholder = {
+                            Text("Search...")
+                        }
                     )
-                })
+                    SpacerDefault()
+                }
+            }
 
         },
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackBarHostState)
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -99,31 +153,34 @@ fun PlansScreen(
                     contentDescription = null
                 )
             }
-        }
+        },
+        floatingActionButtonPosition = FabPosition.End
     ) { paddingValues ->
+
         LazyColumn(
-            contentPadding = paddingNormal.all,
+            contentPadding = paddingMedium.horizontal,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(marginNormal)
+            verticalArrangement = Arrangement.spacedBy(marginMedium)
         ) {
+
             items(
-                count = plans.itemCount
+                count = plans.itemCount,
+                key = { plans[it]?.plan?.id ?: 0 }
             ) { index ->
-                plans[index]?.let {
-                    val plan = it.plan
-                    PlanCard(
-                        it,
-                        onClick = {
-                            navController.navigate(
-                                ScreenPlanDetails(
-                                    plan.id,
-                                    plan.title
-                                )
+                val planDetails = plans[index] ?: return@items
+                PlanCard(
+                    planDetails,
+                    onClick = {
+                        navController.navigate(
+                            ScreenPlanDetails(
+                                planDetails.plan.id,
+                                planDetails.plan.title
                             )
-                        })
-                }
+                        )
+                    },
+                )
             }
 
             handlePagingState(
@@ -137,25 +194,66 @@ fun PlansScreen(
 @Composable
 fun PlanCard(
     planDetails: PlanDetails,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val plan = planDetails.plan
     val metrics = planDetails.progress
+    var isExpanded by remember { mutableStateOf(false) }
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f,
+        label = "rotationAnimation"
+    )
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(CardDefaults.shape)
             .background(MaterialTheme.colorScheme.surfaceContainer)
             .clickable(onClick = onClick)
-            .padding(paddingNormal.all)
+            .padding(paddingMedium.all)
             .wrapContentHeight()
     ) {
-        Text(
-            text = plan.title,
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.size(marginNormal))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(paddingSmall.horizontal)
+        ) {
+            Text(
+                text = plan.title,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(
+                onClick = {
+                    isExpanded = !isExpanded
+                },
+                modifier = Modifier
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainerLow,
+                        CircleShape
+                    )
+                    .rotate(rotationAngle)
+            ) {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+            }
+        }
+
+        SpacerDefault()
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerLow,
+                    shape = CardDefaults.shape
+                )
+                .padding(paddingMedium.all)
+        ) {
+            BudgetText(
+                plan.initialBudget,
+                metrics.remainingAmount,
+                modifier = Modifier.weight(1f)
+            )
+            SpacerDefault()
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -173,13 +271,10 @@ fun PlanCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Spacer(modifier = Modifier.size(marginNormal))
-            BudgetText(
-                plan.initialBudget,
-                metrics.remainingAmount
-            )
         }
-        TransactionSummary(metrics = metrics)
+        AnimatedVisibility(isExpanded) {
+            TransactionSummary(metrics = metrics)
+        }
     }
 
 }
@@ -189,12 +284,12 @@ fun TransactionSummary(metrics: PlanMetrics) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingNormal.top)
+            .padding(paddingMedium.top)
             .background(
                 MaterialTheme.colorScheme.surfaceContainerLow,
                 CardDefaults.shape
             )
-            .padding(paddingMinimal.all)
+            .padding(paddingMedium.all)
     ) {
         Column(modifier = Modifier) {
             // Transaction Summary
@@ -203,13 +298,15 @@ fun TransactionSummary(metrics: PlanMetrics) {
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Predicted Transactions: ${metrics.predictedTransactions}",
+                text = "Estimated Transactions: ${metrics.estimatedTransactions}",
                 style = MaterialTheme.typography.bodySmall
             )
+            SpacerExtraSmall()
             Text(
                 text = "Paid Transactions: ${metrics.paidTransactions}",
                 style = MaterialTheme.typography.bodySmall
             )
+            SpacerExtraSmall()
             Text(
                 text = "Total Transactions: ${metrics.totalTransactions}",
                 style = MaterialTheme.typography.bodySmall
@@ -217,12 +314,13 @@ fun TransactionSummary(metrics: PlanMetrics) {
         }
         Spacer(modifier = Modifier.weight(1f))
         CircularProgressWithLabel(
-            progress = metrics.predictedTransactions.toFloat() / metrics.totalTransactions,
-            label = "Predicted"
+            progress = metrics.estimatedTransactionProgress,
+            label = "Estimated"
         )
-        Spacer(modifier = Modifier.size(marginNormal))
+        Spacer(modifier = Modifier.size(marginMedium))
+
         CircularProgressWithLabel(
-            progress = metrics.paidTransactions.toFloat() / metrics.totalTransactions,
+            progress = metrics.paidTransactionProgress,
             label = "Paid"
         )
     }
@@ -243,7 +341,7 @@ fun CircularProgressWithLabel(
             text = label,
             style = MaterialTheme.typography.bodySmall
         )
-        Spacer(modifier = Modifier.size(marginMinimal))
+        Spacer(modifier = Modifier.size(marginSmall))
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -268,7 +366,8 @@ fun CircularProgressWithLabel(
 @Composable
 fun BudgetText(
     initialBudget: Double,
-    remainingAmount: Double
+    remainingAmount: Double,
+    modifier: Modifier = Modifier
 ) {
     val text = buildAnnotatedString {
         withStyle(
@@ -305,5 +404,5 @@ fun BudgetText(
             append("Rs.${remainingAmount}")
         }
     }
-    Text(text = text)
+    Text(text = text, modifier)
 }

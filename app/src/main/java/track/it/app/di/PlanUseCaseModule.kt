@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import track.it.app.domain.repository.PlanRepository
+import track.it.app.domain.repository.TransactionRepository
 import track.it.app.domain.usecases.plan.CreatePlanUseCase
 import track.it.app.domain.usecases.plan.DeletePlanUseCase
 import track.it.app.domain.usecases.plan.GetPlanUseCase
@@ -24,8 +25,11 @@ object PlanUseCaseModule {
 
     @Provides
     @Singleton
-    fun provideDeletePlanUseCase(planRepository: PlanRepository): DeletePlanUseCase {
-        return DeletePlanUseCase(planRepository)
+    fun provideDeletePlanUseCase(
+        planRepository: PlanRepository,
+        transactionRepository: TransactionRepository
+    ): DeletePlanUseCase {
+        return DeletePlanUseCase(planRepository, transactionRepository)
     }
 
     @Provides

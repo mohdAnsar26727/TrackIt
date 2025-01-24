@@ -19,6 +19,14 @@ data class PlanMetrics(
     val remainingAmount: Double,
     val progress: Float, // Progress as a percentage (0.0f to 1.0f)
     val totalTransactions: Int,
-    val predictedTransactions: Int,
+    val estimatedTransactions: Int,
     val paidTransactions: Int
-)
+) {
+    val paidTransactionProgress: Float
+        get() = if (totalTransactions == 0) 0f else paidTransactions.toFloat() / totalTransactions
+
+    val estimatedTransactionProgress: Float
+        get() = if (totalTransactions == 0) 0f else estimatedTransactions.toFloat() / totalTransactions
+
+
+}

@@ -24,9 +24,20 @@ interface PlanDao {
     @Delete
     suspend fun deletePlan(plan: PlanEntity): Int
 
+    @Query("DELETE FROM plans WHERE id = :planId")
+    suspend fun deletePlan(planId: Long): Int
+
     // Fetch all plans with pagination support
-    @Query("SELECT * FROM plans ORDER BY createdAt DESC")
-    fun getAllPlansPaged(): PagingSource<Int, PlanEntity>
+    @Query(
+        """
+    SELECT * FROM plans 
+    WHERE (:query IS NULL OR :query = '' 
+           OR title LIKE '%' || :query || '%' 
+           OR description LIKE '%' || :query || '%') 
+    ORDER BY createdAt DESC
+    """
+    )
+    fun getAllPlansPaged(query: String): PagingSource<Int, PlanEntity>
 
     // Fetch a specific plan by ID
     @Query("SELECT * FROM plans WHERE id = :planId")

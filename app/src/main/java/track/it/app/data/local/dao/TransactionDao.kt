@@ -26,6 +26,7 @@ interface TransactionDao {
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity): Int
 
+    @Transaction
     @Query("SELECT * FROM transactions WHERE id=:id LIMIT 1")
     fun getTransactionById(id: Long): TransactionWithImagesEntity?
 
@@ -39,4 +40,7 @@ interface TransactionDao {
     @Transaction
     @Query("SELECT * FROM transactions WHERE planId = :planId ORDER BY createdAt DESC")
     fun getTransactionsWithImagesByPlanIdPaged(planId: Long): PagingSource<Int, TransactionWithImagesEntity>
+
+    @Query("DELETE FROM transactions WHERE planId = :planId")
+    fun deleteTransactionsByPlanId(planId: Long): Int
 }

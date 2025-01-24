@@ -65,10 +65,10 @@ import track.it.app.di.TransactionDetailsViewModelFactoryProvider
 import track.it.app.domain.model.Transaction
 import track.it.app.domain.model.TransactionStatus
 import track.it.app.ui.theme.green40
-import track.it.app.ui.theme.marginMinimal
-import track.it.app.ui.theme.marginNormal
-import track.it.app.ui.theme.paddingMinimal
-import track.it.app.ui.theme.paddingNormal
+import track.it.app.ui.theme.marginMedium
+import track.it.app.ui.theme.marginSmall
+import track.it.app.ui.theme.paddingMedium
+import track.it.app.ui.theme.paddingSmall
 import track.it.app.ui.theme.yellow40
 import track.it.app.ui.widget.ActionMenuText
 
@@ -159,10 +159,10 @@ fun TransactionDetailsScreen(
                     text = "Bill Images",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(paddingMinimal.horizontal)
+                    modifier = Modifier.padding(paddingSmall.horizontal)
                 )
 
-                Spacer(modifier = Modifier.height(marginNormal))
+                Spacer(modifier = Modifier.height(marginMedium))
 
                 BillImagesGrid(
                     images = transactionData!!.billImages.map { it.imageUrl },
@@ -176,9 +176,9 @@ fun TransactionDetailsScreen(
 @Composable
 fun TransactionStatusChip(transactionStatus: TransactionStatus) {
     when (transactionStatus) {
-        TransactionStatus.PREDICTED -> {
+        TransactionStatus.ESTIMATED -> {
             StatusChip(
-                label = "Predicted",
+                label = "Estimated",
                 backgroundColor = yellow40,
                 textColor = MaterialTheme.colorScheme.onSurface
             )
@@ -225,8 +225,8 @@ fun BillImagesGrid(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(marginMinimal),
-        horizontalArrangement = Arrangement.spacedBy(marginMinimal)
+        verticalArrangement = Arrangement.spacedBy(marginSmall),
+        horizontalArrangement = Arrangement.spacedBy(marginSmall)
     ) {
         items(images) { imageUrl ->
             AsyncImage(
@@ -256,7 +256,7 @@ fun BillImagesGrid(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingNormal.all)
+                    .padding(paddingMedium.all)
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, zoom, _ ->
                             scale *= zoom
@@ -317,7 +317,7 @@ fun CloseButton(
                 ),
                 CircleShape
             )
-            .padding(paddingMinimal.all),
+            .padding(paddingSmall.all),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -356,7 +356,7 @@ fun TransactionCard(
                 ),
                 CardDefaults.shape
             )
-            .padding(paddingMinimal.all)
+            .padding(paddingSmall.all)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(

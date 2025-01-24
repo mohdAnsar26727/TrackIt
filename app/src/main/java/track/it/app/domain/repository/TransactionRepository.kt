@@ -21,8 +21,11 @@ interface TransactionRepository {
     suspend fun deleteTransaction(id: Long)
     suspend fun addTransactionProof(
         copiedImages: List<String>,
-        transactionId: Long
+        transactionId: Long,
+        planId: Long
     )
 
     suspend fun deleteAllTransactionProof(transactionId: Long)
+
+    suspend fun deleteTransactionsByPlanId(planId: Long)
 }

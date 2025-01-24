@@ -11,21 +11,22 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.02"
 
 hilt = "2.52"
-lifecycle = "2.8.6"
+lifecycle = "2.8.7"
 hiltNavigation = "1.2.0"
 accompanistDrawablepainter = "0.36.0"
 accompanistSystemuicontroller = "0.36.0"
-navigationCompose = "2.8.1"
-uiTextGoogleFonts = "1.7.2"
+navigationCompose = "2.8.5"
+uiTextGoogleFonts = "1.7.6"
 coilCompose = "2.7.0"
-pagingRuntime = "3.3.2"
-pagingCompose = "3.3.2"
+pagingRuntime = "3.3.5"
+pagingCompose = "3.3.5"
 room = "2.6.1"
 comGoogleDevtoolsKspGradlePlugin = "2.0.20-1.0.25"
-activityKtx = "1.9.2"
+activityKtx = "1.9.3"
 roomKtx = "2.6.1"
 assistedInjectAnnotationsDagger2 = "0.8.1"
 coreSplashscreen = "1.0.1"
+accompanistNavigationAnimation = "0.36.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,13 +65,14 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 assisted-inject-annotations-dagger2 = { group = "com.squareup.inject", name = "assisted-inject-annotations-dagger2", version.ref = "assistedInjectAnnotationsDagger2" }
 assisted-inject-processor-dagger2 = { group = "com.squareup.inject", name = "assisted-inject-processor-dagger2", version.ref = "assistedInjectAnnotationsDagger2" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "comGoogleDevtoolsKspGradlePlugin" }
 
 

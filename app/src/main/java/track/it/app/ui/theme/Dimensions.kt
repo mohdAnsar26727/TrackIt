@@ -3,27 +3,34 @@ package track.it.app.ui.theme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import track.it.app.ui.theme.Dimensions.extraLargeSize
-import track.it.app.ui.theme.Dimensions.largeSize
-import track.it.app.ui.theme.Dimensions.mediumSize
-import track.it.app.ui.theme.Dimensions.smallSize
+import track.it.app.ui.theme.Dimensions.extraLarge
+import track.it.app.ui.theme.Dimensions.extraSmall
+import track.it.app.ui.theme.Dimensions.large
+import track.it.app.ui.theme.Dimensions.medium
+import track.it.app.ui.theme.Dimensions.small
+import track.it.app.ui.theme.Dimensions.verySmall
+
 
 object Dimensions {
-    val smallSize = 8.dp
-    val mediumSize = 16.dp
-    val largeSize = 24.dp
-    val extraLargeSize = 32.dp
+    val extraSmall = 2.dp
+    val verySmall = 4.dp
+    val small = 8.dp
+    val medium = 16.dp
+    val large = 24.dp
+    val extraLarge = 32.dp
 }
 
-val marginMinimal = smallSize
-val marginNormal = mediumSize
-val marginLarge = largeSize
-val marginExtraLarge = extraLargeSize
+val marginExtraSmall = extraSmall
+val marginVerySmall = verySmall
+val marginSmall = small
+val marginMedium = medium
+val marginLarge = large
+val marginExtraLarge = extraLarge
 
-val paddingMinimal = ContentPadding(smallSize)
-val paddingNormal = ContentPadding(mediumSize)
-val paddingLarge = ContentPadding(largeSize)
-val paddingExtraLarge = ContentPadding(extraLargeSize)
+val paddingSmall = ContentPadding(small)
+val paddingMedium = ContentPadding(medium)
+val paddingLarge = ContentPadding(large)
+val paddingExtraLarge = ContentPadding(extraLarge)
 
 class ContentPadding(private val value: Dp) {
     val all = PaddingValues(value)

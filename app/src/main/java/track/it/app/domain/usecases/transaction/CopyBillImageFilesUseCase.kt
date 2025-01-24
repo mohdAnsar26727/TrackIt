@@ -1,8 +1,8 @@
 package track.it.app.domain.usecases.transaction
 
 import track.it.app.domain.repository.FileRepository
-import track.it.app.ui.util.DateFormat
-import track.it.app.ui.util.formattedDate
+import track.it.app.util.DateFormat
+import track.it.app.util.formattedDate
 
 class CopyBillImageFilesUseCase(
     private val fileHandler: FileRepository

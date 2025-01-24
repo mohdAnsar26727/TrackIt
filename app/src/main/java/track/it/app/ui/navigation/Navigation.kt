@@ -1,5 +1,11 @@
 package track.it.app.ui.navigation
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -43,7 +49,25 @@ fun SetupNavHost(navController: NavHostController, modifier: Modifier = Modifier
     NavHost(
         navController = navController,
         startDestination = ScreenPlans,
-        modifier
+        modifier = modifier,
+        enterTransition = {
+            slideInHorizontally(
+                animationSpec = spring(stiffness = Spring.StiffnessLow),
+                initialOffsetX = { fullWidth -> fullWidth }
+            )
+        },
+        exitTransition = {
+            fadeOut(targetAlpha = 1f)
+        },
+        popEnterTransition = {
+            fadeIn(initialAlpha = 1f)
+        },
+        popExitTransition = {
+            slideOutHorizontally(
+                animationSpec = spring(stiffness = Spring.StiffnessLow),
+                targetOffsetX = { fullWidth -> fullWidth }
+            )
+        }
     ) {
         //-------------------------Main Routes--------------------------------
         composable<ScreenPlans> {

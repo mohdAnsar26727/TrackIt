@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TrackIt</string>
+    <string name="app_name">Track.it</string>
     <string name="retry">Retry</string>
     <string name="let_me_cook">Let me cook</string>
     <string name="edit">Edit</string>
@@ -7,4 +7,5 @@
     <string name="save">Save</string>
     <string name="no_transactions_found">No Transactions Found.</string>
     <string name="looks_like_no_plans">Looks like you don\'t have any plans.</string>
+    <string name="cancel">Cancel</string>
 </resources>

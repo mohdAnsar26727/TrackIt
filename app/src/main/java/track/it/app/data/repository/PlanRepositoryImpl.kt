@@ -22,13 +22,13 @@ class PlanRepositoryImpl @Inject constructor(
     private val planDao: PlanDao,
     private val transactionDao: TransactionDao
 ) : PlanRepository {
-    override fun getPlans(): Flow<PagingData<PlanDetails>> {
+    override fun getPlans(query: String): Flow<PagingData<PlanDetails>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 10, // Define the page size
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { planDao.getAllPlansPaged() }
+            pagingSourceFactory = { planDao.getAllPlansPaged(query) }
         ).flow.map { pagingData ->
             pagingData.map { plan ->
                 val transactions = transactionDao.getTransactionsByPlanId(plan.id)
@@ -81,10 +81,10 @@ class PlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deletePlan(id: Long) {
-        doIoOperation {
-            val plan = planDao.getPlanById(id) ?: return@doIoOperation
-            planDao.deletePlan(plan)
+    override suspend fun deletePlan(id: Long): Boolean {
+        return doIoOperation {
+            val result = planDao.deletePlan(id)
+            return@doIoOperation result > 0
         }
     }
 }
