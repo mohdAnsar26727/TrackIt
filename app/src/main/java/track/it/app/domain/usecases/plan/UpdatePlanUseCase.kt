@@ -6,7 +6,5 @@ import track.it.app.domain.repository.PlanRepository
 class UpdatePlanUseCase(
     private val planRepository: PlanRepository
 ) {
-    suspend operator fun invoke(plan: Plan) = runCatching {
-        planRepository.updatePlan(plan)
-    }
+    suspend operator fun invoke(plan: Plan) = planRepository.updatePlan(plan)
 }

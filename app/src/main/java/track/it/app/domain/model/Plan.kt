@@ -6,7 +6,7 @@ data class PlanDetails(
 )
 
 data class Plan(
-    val id: Long = 0,
+    val id: Long = -1,
     val title: String,
     val description: String,
     val initialBudget: Double,

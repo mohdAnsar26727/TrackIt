@@ -40,8 +40,8 @@ class PlanRepositoryImpl @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getPlan(id: Long): PlanDetails {
-        return doIoOperation {
+    override suspend fun getPlan(id: Long): Result<PlanDetails> = runCatching {
+        doIoOperation {
             val plan = planDao.getPlanById(id) ?: throw Exception("No data found!")
             val transactions = transactionDao.getTransactionsByPlanId(id)
             mapPlanEntityWithTransactions(
@@ -51,7 +51,7 @@ class PlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updatePlan(plan: Plan) {
+    override suspend fun updatePlan(plan: Plan): Result<Unit> = runCatching {
         doIoOperation {
             planDao.updatePlan(
                 PlanEntity(
@@ -66,23 +66,26 @@ class PlanRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addPlan(plan: Plan): Long {
-        return doIoOperation {
-            planDao.insertPlan(
+    override suspend fun addPlan(plan: Plan): Result<Long> = runCatching {
+        doIoOperation {
+
+            val data = getPlan(plan.id).getOrNull()?.plan
+
+            planDao.upsertPlan(
                 PlanEntity(
-                    id = plan.id,
+                    id = data?.id ?: 0,
                     title = plan.title,
                     description = plan.description,
                     initialBudget = plan.initialBudget,
-                    createdAt = System.currentTimeMillis(),
+                    createdAt = data?.createdAt ?: System.currentTimeMillis(),
                     updatedAt = System.currentTimeMillis()
                 )
             )
         }
     }
 
-    override suspend fun deletePlan(id: Long): Boolean {
-        return doIoOperation {
+    override suspend fun deletePlan(id: Long): Result<Boolean> = runCatching {
+        doIoOperation {
             val result = planDao.deletePlan(id)
             return@doIoOperation result > 0
         }

@@ -14,7 +14,7 @@ interface PlanDao {
 
     // Insert a new plan
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlan(plan: PlanEntity): Long
+    suspend fun upsertPlan(plan: PlanEntity): Long
 
     // Update an existing plan
     @Update

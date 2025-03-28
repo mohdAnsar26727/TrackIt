@@ -1,41 +1,49 @@
 package track.it.app.ui.plans.create
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import track.it.app.R
+import track.it.app.domain.model.BudgetUnit
+import track.it.app.domain.model.FormField
 import track.it.app.ui.theme.AppTypography
-import track.it.app.ui.theme.marginSmall
 import track.it.app.ui.theme.paddingMedium
 import track.it.app.ui.widget.CancellableSaveActionButton
+import track.it.app.ui.widget.FormInputField
+import track.it.app.ui.widget.SpacerSmall
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,64 +100,41 @@ fun AddEditPlanScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .animateContentSize()
                     .padding(paddingMedium.horizontal)
                     .padding(paddingMedium.bottom)
                     .verticalScroll(rememberScrollState())
             ) {
 
-                // Title field
-                OutlinedTextField(
+                FormInputField(
+                    field = FormField.PlanName,
                     value = formState.title,
                     onValueChange = viewModel::onTitleValueChange,
-                    label = { Text("Plan Name") },
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_new_plan),
-                            contentDescription = null
-                        )
-                    }
+                    validation = formState.validationResult[FormField.PlanName]
                 )
-                Spacer(modifier = Modifier.size(marginSmall))
-                // Budget field
-                OutlinedTextField(
+                SpacerSmall()
+
+                FormInputField(
+                    field = FormField.Budget,
                     value = formState.budget,
                     onValueChange = viewModel::onBudgetValueChange,
-                    label = { Text("Budget") },
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_rupee),
-                            contentDescription = null
+                    validation = formState.validationResult[FormField.Budget],
+                    trailingContent = {
+                        UnitSelector(
+                            selectedUnit = formState.selectedBudgetUnit,
+                            onUnitChange = viewModel::onBudgetUnitChange
                         )
                     }
                 )
-                Spacer(modifier = Modifier.size(marginSmall))
 
-                //Description Field
-                OutlinedTextField(
+                SpacerSmall()
+
+                FormInputField(
+                    field = FormField.Note,
                     value = formState.description,
                     onValueChange = viewModel::onDescriptionValueChange,
-                    label = { Text("Note") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min),
-                    minLines = 5,
-                    leadingIcon = {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .padding(paddingMedium.vertical),
-                            contentAlignment = Alignment.TopEnd
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_notes),
-                                contentDescription = null
-                            )
-                        }
-
-                    }
+                    modifier = Modifier.wrapContentHeight(),
+                    validation = formState.validationResult[FormField.Note]
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -159,16 +144,58 @@ fun AddEditPlanScreen(
             // Fixed Save Button at the bottom
             CancellableSaveActionButton(
                 onPrimaryAction = {
-                    if (id == null) {
-                        viewModel.addPlan()
-                    } else {
-                        viewModel.updatePlan(id)
-                    }
+                    viewModel.addPlan(id)
                 },
                 onSecondaryAction = {
                     navController.navigateUp()
                 }
             )
+        }
+    }
+}
+
+@Composable
+fun UnitSelector(
+    selectedUnit: BudgetUnit,
+    onUnitChange: (BudgetUnit) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable { expanded = true }
+                .padding(8.dp)
+        ) {
+            Text(
+                selectedUnit.displayName,
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select unit")
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            },
+            border = BorderStroke(
+                OutlinedTextFieldDefaults.UnfocusedBorderThickness,
+                OutlinedTextFieldDefaults.colors().unfocusedIndicatorColor
+            )
+        ) {
+            BudgetUnit.entries.forEach { unit ->
+                DropdownMenuItem(
+                    text = { Text(unit.displayName, style = MaterialTheme.typography.titleSmall) },
+                    onClick = {
+                        onUnitChange(unit)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }

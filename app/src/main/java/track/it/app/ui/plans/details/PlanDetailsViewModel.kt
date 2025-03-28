@@ -43,7 +43,7 @@ class PlanDetailsViewModel @AssistedInject constructor(
 
     private fun getPlanById(id: Long) {
         viewModelScope.launch {
-            _planById.value = getPlanUseCase(id)
+            _planById.value = getPlanUseCase(id).getOrNull()
         }
     }
 

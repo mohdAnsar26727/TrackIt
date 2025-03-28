@@ -27,5 +27,5 @@ interface TransactionRepository {
 
     suspend fun deleteAllTransactionProof(transactionId: Long)
 
-    suspend fun deleteTransactionsByPlanId(planId: Long)
+    suspend fun deleteTransactionsByPlanId(planId: Long): Result<Unit>
 }

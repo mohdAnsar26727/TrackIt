@@ -7,8 +7,8 @@ import track.it.app.domain.model.PlanDetails
 
 interface PlanRepository {
     fun getPlans(query: String): Flow<PagingData<PlanDetails>>
-    suspend fun getPlan(id: Long): PlanDetails
-    suspend fun updatePlan(plan: Plan)
-    suspend fun addPlan(plan: Plan): Long
-    suspend fun deletePlan(id: Long): Boolean
+    suspend fun getPlan(id: Long): Result<PlanDetails>
+    suspend fun updatePlan(plan: Plan): Result<Unit>
+    suspend fun addPlan(plan: Plan): Result<Long>
+    suspend fun deletePlan(id: Long): Result<Boolean>
 }

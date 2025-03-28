@@ -119,7 +119,7 @@ class TransactionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteTransactionsByPlanId(planId: Long) {
+    override suspend fun deleteTransactionsByPlanId(planId: Long) = runCatching {
         doIoOperation {
             val images = imageDao.getTransactionProofOfPlan(planId)
             imageDao.deleteImagesByPlanId(planId)
