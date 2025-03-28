@@ -6,5 +6,5 @@ import track.it.app.domain.repository.PlanRepository
 class GetPlanUseCase(
     private val planRepository: PlanRepository
 ) {
-    suspend operator fun invoke(id: Long): PlanDetails? = planRepository.getPlan(id)
+    suspend operator fun invoke(id: Long): Result<PlanDetails> = planRepository.getPlan(id)
 }

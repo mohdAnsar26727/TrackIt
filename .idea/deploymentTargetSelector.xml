@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-19T18:26:37.733344700Z">
+        <DropdownSelection timestamp="2025-01-24T18:07:41.476783600Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=7PLRXGRKQG59AMQ4" />
@@ -20,7 +20,7 @@
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ansar\.android\avd\Pixel_8_API_35.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ansar\.android\avd\Resizable_Experimental_API_Baklava.avd" />
               </handle>
             </Target>
           </targets>

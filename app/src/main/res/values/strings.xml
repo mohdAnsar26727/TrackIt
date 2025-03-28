@@ -8,4 +8,19 @@
     <string name="no_transactions_found">No Transactions Found.</string>
     <string name="looks_like_no_plans">Looks like you don\'t have any plans.</string>
     <string name="cancel">Cancel</string>
+    <string name="error_empty_plan_name">✘ Please enter a plan name.</string>
+    <string name="error_only_numbers_plan_name"> ✘ Plan name should be memorable—please include letters.</string>
+    <string name="error_short_plan_name">✘ Plan name must be at least 3 characters long.</string>
+    <string name="error_invalid_chars_plan_name">✘ Plan name can only contain letters, numbers, and spaces.</string>
+
+    <string name="error_empty_budget">✘ Budget cannot be empty</string>
+    <string name="error_invalid_budget">✘ Budget must be a valid number</string>
+    <string name="error_negative_budget">✘ Budget must be positive</string>
+
+    <string name="error_empty_description">✘ Description cannot be empty</string>
+    <string name="error_short_description">✘ Description must be at least 10 characters</string>
+
+    <string name="plan_name_label">Plan Name</string>
+    <string name="budget_label">Budget</string>
+    <string name="note_label">Note</string>
 </resources>
