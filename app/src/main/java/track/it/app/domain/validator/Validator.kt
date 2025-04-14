@@ -3,11 +3,13 @@ package track.it.app.domain.validator
 import android.content.Context
 import track.it.app.domain.model.ValidationResult
 
-abstract class BaseValidator(
+abstract class BaseValidator<T>(
     private val context: Context,
-    private val rules: Map<ValidationRule<String>, Int>
+    rules: Map<ValidationRule<T>, Int> = mutableMapOf()
 ) {
-    fun validate(input: String): ValidationResult {
+    private val rules: MutableMap<ValidationRule<T>, Int> = rules.toMutableMap()
+
+    fun validate(input: T): ValidationResult {
         val errors = rules.mapNotNull { (rule, errorMessageRes) ->
             if (!rule.isValid(input)) context.getString(errorMessageRes) else null
         }
@@ -17,6 +19,11 @@ abstract class BaseValidator(
         } else {
             ValidationResult.Error(errors.joinToString("\n"))
         }
+    }
+
+    fun setRules(newRules: Map<ValidationRule<T>, Int>) {
+        rules.clear()
+        rules.putAll(newRules)
     }
 }
 

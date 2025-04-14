@@ -1,5 +1,6 @@
 package track.it.app.ui.widget
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -19,29 +20,36 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import track.it.app.domain.model.FormField
-import track.it.app.domain.model.InputType
 import track.it.app.domain.model.ValidationResult
+import track.it.app.ui.model.FormFieldConfig
+import track.it.app.ui.model.InputType
 
 @Composable
 fun FormInputField(
-    field: FormField,
+    config: FormFieldConfig,
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource? = null,
     validation: ValidationResult? = null,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
+    if (config !is FormFieldConfig.InputField) return
+
     val focusRequester = remember { FocusRequester() }
     var isFocused by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {
+            if (it.length <= config.maxLength) {
+                onValueChange(it)
+            }
+        },
         label = {
             Text(
-                context.getString(field.labelResId),
+                context.getString(config.labelResId),
                 style = MaterialTheme.typography.labelLarge
             )
         },  // Fetch label dynamically
@@ -51,14 +59,14 @@ fun FormInputField(
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
             },
-        keyboardOptions = when (field.inputType) {
+        keyboardOptions = when (config.inputType) {
             InputType.TEXT -> KeyboardOptions.Default
             InputType.NUMBER -> KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         },
         leadingIcon = {
-            LeadingIcon(field, validation)
+            LeadingIcon(config, validation)
         },
-        minLines = field.minLines,
+        minLines = config.minLines,
         isError = validation is ValidationResult.Error,
         supportingText = {
             if (validation is ValidationResult.Error && isFocused.not()) {
@@ -67,13 +75,15 @@ fun FormInputField(
         },
         trailingIcon = trailingContent,
         textStyle = MaterialTheme.typography.titleMedium,
+        readOnly = config.isReadOnly,
+        interactionSource = interactionSource,
     )
 }
 
 @Composable
-fun LeadingIcon(field: FormField, validation: ValidationResult?) {
+fun LeadingIcon(config: FormFieldConfig.InputField, validation: ValidationResult?) {
     Icon(
-        painter = painterResource(id = field.iconResId),
+        painter = painterResource(id = config.iconResId),
         contentDescription = null,
         tint = if (validation is ValidationResult.Error) {
             OutlinedTextFieldDefaults.colors().errorSupportingTextColor

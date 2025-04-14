@@ -6,7 +6,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Update
+import androidx.sqlite.db.SupportSQLiteQuery
 import track.it.app.data.local.entity.PlanEntity
 
 @Dao
@@ -28,24 +30,10 @@ interface PlanDao {
     suspend fun deletePlan(planId: Long): Int
 
     // Fetch all plans with pagination support
-    @Query(
-        """
-    SELECT * FROM plans 
-    WHERE (:query IS NULL OR :query = '' 
-           OR title LIKE '%' || :query || '%' 
-           OR description LIKE '%' || :query || '%') 
-    ORDER BY createdAt DESC
-    """
-    )
-    fun getAllPlansPaged(query: String): PagingSource<Int, PlanEntity>
+    @RawQuery(observedEntities = [PlanEntity::class])
+    fun getAllPlansPaged(query: SupportSQLiteQuery): PagingSource<Int, PlanEntity>
 
     // Fetch a specific plan by ID
     @Query("SELECT * FROM plans WHERE id = :planId")
     suspend fun getPlanById(planId: Long): PlanEntity?
-
-    @Query("SELECT * FROM plans ORDER BY id ASC LIMIT :limit OFFSET :offset")
-    suspend fun getPlansPaginated(
-        offset: Int,
-        limit: Int
-    ): List<PlanEntity>
 }

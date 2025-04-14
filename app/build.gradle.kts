@@ -26,7 +26,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
         release {
+            isShrinkResources = false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -86,6 +91,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.accompanist.navigation.animation)
     annotationProcessor(libs.assisted.inject.processor.dagger2)
+    implementation(libs.androidx.datastore.preferences)
 
     ksp(libs.androidx.room.compiler)
     kapt(libs.hilt.android.compiler)

@@ -1,5 +1,6 @@
 package track.it.app.ui.navigation
 
+import android.app.Activity
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
@@ -7,16 +8,21 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.serialization.Serializable
+import track.it.app.di.AddEditTransactionViewModelFactoryProvider
 import track.it.app.ui.plans.create.AddEditPlanScreen
 import track.it.app.ui.plans.details.PlanDetailsScreen
 import track.it.app.ui.plans.listing.PlansScreen
 import track.it.app.ui.transaction.create.AddEditTransactionScreen
+import track.it.app.ui.transaction.create.AddEditTransactionViewModel
 import track.it.app.ui.transaction.details.TransactionDetailsScreen
 
 @Serializable
@@ -71,7 +77,15 @@ fun SetupNavHost(navController: NavHostController, modifier: Modifier = Modifier
     ) {
         //-------------------------Main Routes--------------------------------
         composable<ScreenPlans> {
-            PlansScreen(navController)
+            PlansScreen(
+                onPlanClick = { id, title ->
+                    val args = ScreenPlanDetails(id, title)
+                    navController.navigate(args)
+                },
+                onNewPlanClick = {
+                    navController.navigate(ScreenAddEditPlans())
+                }
+            )
         }
         composable<ScreenPlanDetails> {
             val args = it.toRoute<ScreenPlanDetails>()
@@ -89,9 +103,20 @@ fun SetupNavHost(navController: NavHostController, modifier: Modifier = Modifier
         }
         composable<ScreenAddEditTransactions> {
             val args = it.toRoute<ScreenAddEditTransactions>()
+
+            val context = LocalContext.current
+            val factory: AddEditTransactionViewModel.AddEditTransactionViewModelFactory = remember {
+                EntryPointAccessors.fromActivity(
+                    context as Activity,
+                    AddEditTransactionViewModelFactoryProvider::class.java
+                ).addEditTransactionViewModelFactory()
+            }
+            val viewModel: AddEditTransactionViewModel = factory.create(args.planId)
+
             AddEditTransactionScreen(
                 navController,
-                args
+                args,
+                viewModel = viewModel
             )
         }
         composable<ScreenAddEditPlans> {

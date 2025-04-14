@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,7 +37,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import track.it.app.domain.model.BudgetUnit
-import track.it.app.domain.model.FormField
+import track.it.app.domain.model.PlanForm.Budget
+import track.it.app.domain.model.PlanForm.Name
+import track.it.app.domain.model.PlanForm.Note
+import track.it.app.ui.model.PlanFormField
 import track.it.app.ui.theme.AppTypography
 import track.it.app.ui.theme.paddingMedium
 import track.it.app.ui.widget.CancellableSaveActionButton
@@ -106,39 +108,48 @@ fun AddEditPlanScreen(
                     .verticalScroll(rememberScrollState())
             ) {
 
-                FormInputField(
-                    field = FormField.PlanName,
-                    value = formState.title,
-                    onValueChange = viewModel::onTitleValueChange,
-                    validation = formState.validationResult[FormField.PlanName]
-                )
-                SpacerSmall()
+                PlanFormField.fields.forEach { (field, config) ->
 
-                FormInputField(
-                    field = FormField.Budget,
-                    value = formState.budget,
-                    onValueChange = viewModel::onBudgetValueChange,
-                    validation = formState.validationResult[FormField.Budget],
-                    trailingContent = {
-                        UnitSelector(
-                            selectedUnit = formState.selectedBudgetUnit,
-                            onUnitChange = viewModel::onBudgetUnitChange
-                        )
+                    val title: String
+                    val callBack: (String) -> Unit
+
+
+                    when (field) {
+                        Name -> {
+                            title = formState.title
+                            callBack = viewModel::onTitleValueChange
+                        }
+
+                        Budget -> {
+                            title = formState.budget
+                            callBack = viewModel::onBudgetValueChange
+                        }
+
+                        Note -> {
+                            title = formState.description
+                            callBack = viewModel::onDescriptionValueChange
+                        }
                     }
-                )
 
-                SpacerSmall()
+                    SpacerSmall()
 
-                FormInputField(
-                    field = FormField.Note,
-                    value = formState.description,
-                    onValueChange = viewModel::onDescriptionValueChange,
-                    modifier = Modifier.wrapContentHeight(),
-                    validation = formState.validationResult[FormField.Note]
-                )
+                    FormInputField(
+                        config = config,
+                        value = title,
+                        onValueChange = callBack,
+                        validation = formState.validationResult[field],
+                        trailingContent = {
+                            if (field == Budget) {
+                                UnitSelector(
+                                    selectedUnit = formState.selectedBudgetUnit,
+                                    onUnitChange = viewModel::onBudgetUnitChange
+                                )
+                            }
+                        }
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
-
             }
 
             // Fixed Save Button at the bottom
@@ -199,3 +210,4 @@ fun UnitSelector(
         }
     }
 }
+

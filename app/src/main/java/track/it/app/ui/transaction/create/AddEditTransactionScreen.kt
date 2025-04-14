@@ -14,14 +14,11 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -32,7 +29,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -45,7 +41,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
@@ -71,7 +66,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,15 +75,19 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import track.it.app.R
+import track.it.app.domain.model.TransactionForm
 import track.it.app.domain.model.TransactionStatus
+import track.it.app.ui.model.TransactionFormField
 import track.it.app.ui.navigation.ScreenAddEditTransactions
+import track.it.app.ui.plans.create.UnitSelector
 import track.it.app.ui.theme.AppTypography
 import track.it.app.ui.theme.marginMedium
-import track.it.app.ui.theme.marginSmall
 import track.it.app.ui.theme.paddingMedium
 import track.it.app.ui.theme.paddingSmall
 import track.it.app.ui.transaction.viewmodel.TransactionCUDViewmodel
 import track.it.app.ui.widget.CancellableSaveActionButton
+import track.it.app.ui.widget.FormInputField
+import track.it.app.ui.widget.SpacerSmall
 import track.it.app.util.DateFormat
 import track.it.app.util.formattedDate
 import track.it.app.util.toTitleCase
@@ -99,14 +97,16 @@ import track.it.app.util.toTitleCase
 fun AddEditTransactionScreen(
     navController: NavController,
     args: ScreenAddEditTransactions,
+    viewModel: AddEditTransactionViewModel,
     transactionViewModel: TransactionCUDViewmodel = hiltViewModel(),
-    viewModel: AddEditTransactionViewModel = hiltViewModel()
 ) {
+
     if (args.id != null) {
         viewModel.setTransactionIdForEdit(args.id)
         viewModel.editTransaction.collectAsStateWithLifecycle()
     }
-    val selectedImages = viewModel.selectedImagesList
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
+    val selectedImages = formState.images.toList()
 
     val multiplePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
@@ -119,7 +119,7 @@ fun AddEditTransactionScreen(
                 return utcTimeMillis <= System.currentTimeMillis()
             }
         },
-        initialSelectedDateMillis = System.currentTimeMillis()
+        initialSelectedDateMillis = formState.date
     )
     val selectedDate =
         datePickerState.selectedDateMillis?.formattedDate(DateFormat.DD_MM_YYYY) ?: ""
@@ -225,84 +225,73 @@ fun AddEditTransactionScreen(
                             .fillMaxWidth()
                             .wrapContentHeight()
                     ) {
-                        // To field
-                        OutlinedTextField(
-                            value = viewModel.to,
-                            onValueChange = viewModel::onToValueChange,
-                            label = { Text("To") },
-                            modifier = Modifier.fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_person_svgrepo_com),
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                        Spacer(modifier = Modifier.size(marginSmall))
-                        // Amount field
-                        OutlinedTextField(
-                            value = viewModel.amount,
-                            onValueChange = viewModel::onAmountValueChange,
-                            label = { Text("Amount") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth(),
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_rupee),
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                        Spacer(modifier = Modifier.size(marginSmall))
-                        // Date field
-                        OutlinedTextField(
-                            value = selectedDate,
-                            onValueChange = { },
-                            label = { Text("Date") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                                .onFocusChanged { focusState ->
-                                    if (focusState.isFocused) {
-                                        showDatePicker = true
-                                    }
-                                }
-                                .focusable(interactionSource = interactionSource),
-                            leadingIcon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_rupee),
-                                    contentDescription = null
-                                )
-                            },
-                            readOnly = true,
-                            interactionSource = interactionSource
-                        )
-                        Spacer(modifier = Modifier.size(marginSmall))
-                        // Note field
-                        OutlinedTextField(
-                            value = viewModel.note,
-                            onValueChange = viewModel::onNoteValueChange,
-                            label = { Text("Note") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                            minLines = 5,
-                            leadingIcon = {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .padding(paddingMedium.vertical),
-                                    contentAlignment = Alignment.TopEnd
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_notes),
-                                        contentDescription = null
-                                    )
+
+                        TransactionFormField.field.forEach { (field, config) ->
+                            val title: String
+                            val callBack: (String) -> Unit
+
+                            when (field) {
+                                TransactionForm.To -> {
+                                    title = formState.to
+                                    callBack = viewModel::onToValueChange
                                 }
 
+                                TransactionForm.Amount -> {
+                                    title = formState.amount
+                                    callBack = viewModel::onAmountValueChange
+                                }
+
+                                TransactionForm.Date -> {
+                                    title = selectedDate
+                                    callBack = {
+                                        viewModel.onDateValueChange(
+                                            datePickerState.selectedDateMillis
+                                                ?: System.currentTimeMillis()
+                                        )
+                                    }
+                                }
+
+                                TransactionForm.Note -> {
+                                    title = formState.note
+                                    callBack = viewModel::onNoteValueChange
+                                }
+
+                                TransactionForm.Image -> {
+                                    return@forEach
+                                }
                             }
-                        )
-                        Spacer(modifier = Modifier.size(marginMedium))
+
+                            SpacerSmall()
+
+                            FormInputField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(
+                                        if (field == TransactionForm.Date) {
+                                            Modifier
+                                                .focusRequester(focusRequester)
+                                                .onFocusChanged { focusState ->
+                                                    if (focusState.isFocused) {
+                                                        showDatePicker = true
+                                                    }
+                                                }
+                                                .focusable(interactionSource = interactionSource)
+                                        } else Modifier),
+                                config = config,
+                                value = title,
+                                onValueChange = callBack,
+                                validation = formState.validationResult[field],
+                                trailingContent = {
+                                    if (field == TransactionForm.Amount) {
+                                        UnitSelector(
+                                            selectedUnit = formState.selectedBudgetUnit,
+                                            onUnitChange = viewModel::onBudgetUnitChange
+                                        )
+                                    }
+                                },
+                                interactionSource = if (field == TransactionForm.Date) interactionSource else null
+                            )
+                        }
 
                         Row(
                             modifier = Modifier.selectableGroup(),
@@ -310,7 +299,7 @@ fun AddEditTransactionScreen(
                         ) {
                             TransactionStatus.entries.forEach { type ->
                                 RadioButton(
-                                    selected = viewModel.selectedOption == type,
+                                    selected = formState.transactionStatus == type,
                                     onClick = { viewModel.onTransactionStatusValueChange(type) })
                                 Text(
                                     text = type.name.toTitleCase(),

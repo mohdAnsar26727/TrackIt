@@ -9,18 +9,35 @@
     <string name="looks_like_no_plans">Looks like you don\'t have any plans.</string>
     <string name="cancel">Cancel</string>
     <string name="error_empty_plan_name">✘ Please enter a plan name.</string>
-    <string name="error_only_numbers_plan_name"> ✘ Plan name should be memorable—please include letters.</string>
-    <string name="error_short_plan_name">✘ Plan name must be at least 3 characters long.</string>
-    <string name="error_invalid_chars_plan_name">✘ Plan name can only contain letters, numbers, and spaces.</string>
+    <string name="error_only_numbers_in_text"> ✘ Text should be memorable—please include letters.</string>
+    <string name="error_short_plan_in_text">✘ Text must be at least 3 characters long.</string>
+    <string name="error_invalid_chars_in_text">✘ Text can only contain letters, numbers, and spaces.</string>
 
-    <string name="error_empty_budget">✘ Budget cannot be empty</string>
-    <string name="error_invalid_budget">✘ Budget must be a valid number</string>
-    <string name="error_negative_budget">✘ Budget must be positive</string>
+    <string name="error_empty_amount">✘ Amount cannot be empty</string>
+    <string name="error_invalid_amount">✘ Amount must be a valid number</string>
+    <string name="error_negative_amount">✘ Amount must be positive</string>
 
-    <string name="error_empty_description">✘ Description cannot be empty</string>
-    <string name="error_short_description">✘ Description must be at least 10 characters</string>
+    <string name="error_empty_description">✘ Note text cannot be empty</string>
+    <string name="error_short_description">✘ Note text must be at least 10 characters</string>
 
     <string name="plan_name_label">Plan Name</string>
     <string name="budget_label">Budget</string>
     <string name="note_label">Note</string>
+
+    <string name="error_empty_transaction_receiver_name">✘ Please enter a payment receiver name.</string>
+    <string name="error_exceed_budget">✘ Insufficient budget!</string>
+    <string name="error_invalid_date">✘ Invalid Date!</string>
+    <string name="file_not_found">✘ File not found!</string>
+    <string name="receiver">Receiver</string>
+    <string name="amount">Amount</string>
+    <string name="date">Date</string>
+    <string name="sort_by">Sort By</string>
+    <string name="sort_order">Sort Order</string>
+    <string name="clear">Clear</string>
+
+    <string name="sort_created_at">Date Created</string>
+    <string name="sort_updated_at">Last Updated</string>
+    <string name="title">Title</string>
+    <string name="budget">Budget</string>
+    <string name="plan_sort_clear_info">Clearing the sort will remove any applied sorting, and the results will be displayed in the default order.</string>
 </resources>

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import track.it.app.domain.model.BudgetUnit
-import track.it.app.domain.model.FormField
+import track.it.app.domain.model.PlanForm
 import track.it.app.domain.model.ValidationResult
 import track.it.app.domain.usecases.plan.GetPlanUseCase
 import track.it.app.domain.usecases.plan.UpsertPlanUseCase
@@ -20,7 +20,7 @@ data class PlanFormState(
     val description: String = "",
     val budget: String = "",
     val selectedBudgetUnit: BudgetUnit = BudgetUnit.LAKH,
-    val validationResult: Map<FormField, ValidationResult> = emptyMap()
+    val validationResult: Map<PlanForm, ValidationResult> = emptyMap()
 )
 
 @HiltViewModel

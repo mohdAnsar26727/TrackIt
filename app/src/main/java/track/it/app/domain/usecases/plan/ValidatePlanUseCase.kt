@@ -1,6 +1,6 @@
 package track.it.app.domain.usecases.plan
 
-import track.it.app.domain.model.FormField
+import track.it.app.domain.model.PlanForm
 import track.it.app.domain.model.ValidationResult
 import track.it.app.domain.validator.BudgetValidator
 import track.it.app.domain.validator.PlanNameValidator
@@ -15,11 +15,11 @@ class ValidatePlanFormUseCase(
         planName: String,
         budget: String,
         description: String
-    ): Map<FormField, ValidationResult> {
+    ): Map<PlanForm, ValidationResult> {
         return mapOf(
-            FormField.PlanName to planNameValidator.validate(planName),
-            FormField.Budget to budgetValidator.validate(budget),
-            FormField.Note to planNoteValidator.validate(description)
+            PlanForm.Name to planNameValidator.validate(planName),
+            PlanForm.Budget to budgetValidator.validate(budget),
+            PlanForm.Note to planNoteValidator.validate(description)
         )
     }
 }

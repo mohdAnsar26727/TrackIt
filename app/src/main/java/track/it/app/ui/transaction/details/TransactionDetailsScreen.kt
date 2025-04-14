@@ -117,11 +117,11 @@ fun TransactionDetailsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(paddingMedium.all)
             ) {
                 Text(
                     text = transaction.to,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
@@ -340,7 +340,6 @@ fun TransactionCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(CardDefaults.shape)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
             .clickable(onClick = onClick)
             .pointerInput(Unit) {
                 detectTapGestures(
@@ -349,19 +348,20 @@ fun TransactionCard(
                 )
             }
             .wrapContentHeight()
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest)
             .border(
                 BorderStroke(
                     1.dp,
-                    MaterialTheme.colorScheme.surfaceContainer
+                    MaterialTheme.colorScheme.surfaceContainerLow
                 ),
                 CardDefaults.shape
             )
-            .padding(paddingSmall.all)
+            .padding(paddingMedium.all)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = transaction.to,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
